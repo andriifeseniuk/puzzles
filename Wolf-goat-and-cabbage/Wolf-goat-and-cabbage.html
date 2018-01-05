@@ -1,0 +1,220 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<style>
+.placeholder {
+    width: 50px;
+    height: 50px;
+    padding: 10px;
+    border: 1px solid #aaaaaa;
+    border-color: rgb(19, 130, 145);
+    margin: 5px;
+}
+.boat-placeholder {
+    width: 50px;
+    height: 50px;
+    border: 1px solid #aaaaaa;
+    border-color: rgb(19, 130, 145);
+    margin: 5px;
+}
+</style>
+<script>
+
+var isLeft = true;
+
+function allowDrop(ev) {
+    if(isLeft) {
+        if(ev.target.id==="right-place-1") {
+            return false;
+        }
+        if(ev.target.id==="right-place-2") {
+            return false;
+        }
+        if(ev.target.id==="right-place-3") {
+            return false;
+        }
+
+    } else {
+        if(ev.target.id==="left-place-1") {
+            return false;
+        }
+        if(ev.target.id==="left-place-2") {
+            return false;
+        }
+        if(ev.target.id==="left-place-3") {
+            return false;
+        }
+    }
+
+    if(ev.target.id === "goat" || ev.target.id === "wolf" || ev.target.id === "cabbage") {
+        return false;
+    }
+
+    var childImg = document.getElementById(ev.target.id).getElementsByTagName("img")[0];
+    console.log(childImg);
+    if(childImg != undefined) {
+         return false;
+    }
+
+    ev.preventDefault();
+}
+
+function preventDrop() {
+    return false;
+}
+
+
+function drag(ev) {
+    ev.dataTransfer.setData("draggable-element-id", ev.target.id);
+}
+
+function drop(ev) {
+    ev.preventDefault();
+    var data = ev.dataTransfer.getData("draggable-element-id");
+    ev.target.appendChild(document.getElementById(data));
+
+    var img1 = document.getElementById("right-place-1").getElementsByTagName("img")[0];
+    var img2 = document.getElementById("right-place-2").getElementsByTagName("img")[0];
+    var img3 = document.getElementById("right-place-3").getElementsByTagName("img")[0];
+
+    var result = document.getElementById("result");
+    if(img1 != undefined && img2 != undefined && img3 != undefined) {
+        result.innerText += "Hurray! All purchases are on the far bank!";
+        
+        document.getElementById("swim-button").disabled = true;
+    }
+
+
+}
+
+function onSwim() {
+    var img;
+    isLeft = !isLeft;
+    if(isLeft) {
+        var boatElement = document.getElementById("boatElement");
+        var leftDock = document.getElementById("left-dock");
+        leftDock.appendChild(boatElement);
+
+        img = document.getElementById("left-place-1").getElementsByTagName("img")[0];
+        if(img != undefined) { img.setAttribute("draggable", true); }
+        img = document.getElementById("left-place-2").getElementsByTagName("img")[0];
+        if(img != undefined) { img.setAttribute("draggable", true); }
+        img = document.getElementById("left-place-3").getElementsByTagName("img")[0];
+        if(img != undefined) { img.setAttribute("draggable", true); }
+        
+        img = document.getElementById("right-place-1").getElementsByTagName("img")[0];
+        if(img != undefined) { img.setAttribute("draggable", false); }
+        img = document.getElementById("right-place-2").getElementsByTagName("img")[0];
+        if(img != undefined) { img.setAttribute("draggable", false); }
+        img = document.getElementById("right-place-3").getElementsByTagName("img")[0];
+        if(img != undefined ) { img.setAttribute("draggable", false); }
+    } else {
+        var boatElement = document.getElementById("boatElement");
+        var rightDock = document.getElementById("right-dock");
+        rightDock.appendChild(boatElement);
+
+        img = document.getElementById("left-place-1").getElementsByTagName("img")[0];
+        if(img != undefined) { img.setAttribute("draggable", false); }
+        img = document.getElementById("left-place-2").getElementsByTagName("img")[0];
+        if(img != undefined) { img.setAttribute("draggable", false); }
+        img = document.getElementById("left-place-3").getElementsByTagName("img")[0];
+        if(img != undefined) { img.setAttribute("draggable", false); }
+        
+        img = document.getElementById("right-place-1").getElementsByTagName("img")[0];
+        if(img != undefined) { img.setAttribute("draggable", true); }
+        img = document.getElementById("right-place-2").getElementsByTagName("img")[0];
+        if(img != undefined) { img.setAttribute("draggable", true); }
+        img = document.getElementById("right-place-3").getElementsByTagName("img")[0];
+        if(img != undefined ) { img.setAttribute("draggable", true); }
+    }
+
+    var wolfElement = document.getElementById("wolf");
+    var wolfUnderAttendention = wolfElement.getAttribute("draggable") === "true";
+    var goatElement = document.getElementById("goat");
+    var goatUnderAttendention = goatElement.getAttribute("draggable") === "true";
+    var cabbageElement = document.getElementById("cabbage");
+    var cabbageUnderAttention = cabbageElement.getAttribute("draggable") === "true";
+
+    var result = document.getElementById("result");
+
+    if(!cabbageUnderAttention && !goatUnderAttendention) {
+        result.innerText += "The goat has eaten the cabbage!";
+
+        var cabbageElement = document.getElementById("cabbage");
+        cabbageElement.parentNode.removeChild(cabbageElement);
+
+        document.getElementById("swim-button").disabled = true;
+    }
+
+    if(!wolfUnderAttendention && !goatUnderAttendention) {
+        result.innerText += "The wolf has eaten the goat!";
+
+        var goatElement = document.getElementById("goat");
+        goatElement.parentNode.removeChild(goatElement);
+
+        document.getElementById("swim-button").disabled = true;
+    }
+}
+</script>
+</head>
+<body>
+
+<h3>Wolf, goat and cabbage</h3>
+<p>Once upon a time a farmer went to a market and purchased a wolf, a goat and a cabbage. On his way home, the farmer came to the bank of a river and rented a boat. But in crossing the river by boat, the farmer could carry only himself and a single one of his purchases: the wolf, the goat or the cabbage. If left unattended together, the wolf would eat the goat, or the goat would eat the cabbage.</p>
+<p>The farmer's challenge is to carry himself and his purchases to the far bank of the river, leaving each purchase intact.</p>
+<table>
+    <tr>
+        <td>
+            <div id="left-place-1" class="placeholder" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <img id="wolf" src="wolf.png" draggable="true" ondragstart="drag(event)" ondragover="preventDrop()" width="45" height="45">
+            </div>
+            <div id="left-place-2" class="placeholder" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <img id="goat" src="goat.png" draggable="true" ondragstart="drag(event)" width="45" height="45">
+            </div>
+            <div id="left-place-3" class="placeholder" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <img id="cabbage" src="cabbage.png" draggable="true" ondragstart="drag(event)" width="45" height="45">
+            </div>
+        
+        </td>
+        <td width="160" align="left">
+            <div id="left-dock"  margin="0" padding="0">
+                <table id="boatElement">
+                    <tr>
+                        <td>
+                            <div id="boat-seat" class="boat-placeholder" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                        </td>
+                        <td>
+                            <img src="man.png" width="50" height="50">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <img src="boat.png" width="150" height="70">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </td>
+        <td>
+            <img src="river.png" width="50" height="230">
+        </td>
+        <td width="160" align="right">
+            <div id="right-dock" margin="0" padding="0">
+            </div>
+        </td>
+        <td>
+            <div id="right-place-1" class="placeholder" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            <div id="right-place-2" class="placeholder" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            <div id="right-place-3" class="placeholder" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        </td>
+
+    </tr>
+</table>
+
+<p id="result"></p>
+
+<button id="swim-button" onclick="onSwim()">Swim</button>
+
+
+</body>
+</html>
